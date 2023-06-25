@@ -6,7 +6,7 @@ metadata:
 variables:
   - name: K3D_ARGS
     description: Arguments to pass to K3d
-    default: --k3s-arg '--disable=traefik@server:0'
+    default: --k3s-arg --disable=traefik
 
 components:
   - name: k3d
