@@ -1,0 +1,27 @@
+kind: ZarfInitConfig
+metadata:
+  name: distro-k3d
+  description: Used to establish a new Zarf cluster
+
+variables:
+  - name: K3D_ARGS
+    description: Arguments to pass to K3d
+    default: --k3s-arg "--disable=traefik@server:0"
+
+components:
+  - name: k3d
+    description: >
+      *** REQUIRES DOCKER ***
+      Installs K3d, a lightweight wrapper to run k3s (Rancher Lab's minimal Kubernetes
+      distribution) in Docker.
+    actions:
+      onDeploy:
+        defaults:
+          maxRetries: 5
+        before:
+          - cmd: ./zarf internal is-valid-hostname
+            maxRetries: 0
+            description: Check if the current system has a, RFC1123 compliant hostname
+        after:
+          - cmd: k3d cluster create --image racer159/k3s-airgap:v1.27.2-k3s1 ${ZARF_VAR_K3D_ARGS}
+            description: Create a 'k3d' cluster

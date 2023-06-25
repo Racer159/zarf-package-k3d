@@ -1,0 +1,50 @@
+kind: ZarfInitConfig
+metadata:
+  name: distro-k3d
+  description: Used to establish a new Zarf cluster
+
+components:
+  # AMD-64 version of the K3d images
+  - name: k3d
+    description: >
+      *** REQUIRES DOCKER ***
+      Loads the required images for K3d into Docker to be used offline.
+    only:
+      cluster:
+        architecture: amd64
+    files:
+      # Transfer the K3d images for docker to use in the air gap
+      - source: k3s-amd64.tar
+        shasum: 81728d02fe9b5f441c06d17ea6f93e97282f9d152ca53fc268ea371fe95dd2f8
+        target: k3s-amd64.tar
+      - source: k3d-proxy-amd64.tar
+        shasum: dc02fb1830344469d62ce54d8b0fe757c1dfca53dc8db55d449f4c1c7af1707a
+        target: k3d-proxy-amd64.tar
+      - source: k3d-tools-amd64.tar
+        shasum: 7363209c664f2dc7e214fe7344bc11aadea02a183f29ac52e27a8bfef4c6859c
+        target: k3d-tools-amd64.tar
+    actions:
+      onCreate:
+        before:
+          - cmd: ./zarf tools registry pull racer159/k3s-airgap:v1.27.2-k3s1 k3s-amd64.tar
+            description: Pull the air gap 'k3s' image
+          - cmd: ./zarf tools registry pull ghcr.io/k3d-io/k3d-proxy:5.5.1 k3d-proxy-amd64.tar
+            description: Pull the 'k3d-proxy' image
+          - cmd: ./zarf tools registry pull ghcr.io/k3d-io/k3d-tools:5.5.1 k3d-tools-amd64.tar
+            description: Pull the 'k3d-tools' image
+      onDeploy:
+        before:
+          - cmd: if [ "$(uname -m)" != "x86_64" ]; then echo "this package architecture is amd64, but the target system has a different architecture. These architectures must be the same" && exit 1; fi
+            description: Check that the host architecture matches the package architecture
+            maxRetries: 0
+        after:
+          - cmd: docker image load -i k3s-amd64.tar
+            description: Load the air gap 'k3s' image into Docker
+          - cmd: docker image load -i k3d-proxy-amd64.tar
+            description: Load the 'k3d-proxy' image into Docker
+          - cmd: docker image load -i k3d-tools-amd64.tar
+            description: Load the 'k3d-tools' image into Docker
+          - cmd: rm k3s-amd64.tar k3d-proxy-amd64.tar k3d-tools-amd64.tar
+            description: Cleanup the loaded images
+
+# TODO: (@WSTARR) ARM-64 version of the K3s stack - `zarf tools registry pull` does not support --architecture today
