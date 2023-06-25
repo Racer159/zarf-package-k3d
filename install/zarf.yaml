@@ -11,17 +11,18 @@ variables:
 components:
   - name: k3d
     description: >
-      *** REQUIRES DOCKER & SUDO (or ROOT) ***
+      *** REQUIRES DOCKER ***
       Installs K3d, a lightweight wrapper to run k3s (Rancher Lab's minimal Kubernetes
       distribution) in Docker.
     actions:
       onDeploy:
-        defaults:
-          maxRetries: 5
         before:
           - cmd: ./zarf internal is-valid-hostname
             maxRetries: 0
             description: Check if the current system has a, RFC1123 compliant hostname
         after:
-          - cmd: k3d cluster create --image racer159/k3s-airgap:v1.27.2-k3s1 ${ZARF_VAR_K3D_ARGS}
+          - cmd: ~/.zarf/bin/k3d cluster create --image racer159/k3s-airgap:v1.27.2-k3s1 ${ZARF_VAR_K3D_ARGS}
             description: Create a 'k3d' cluster
+        onSuccess:
+          - cmd: echo "Successfully created a 'k3d' cluster - to interact with 'k3d' manually add '~/.zarf/bin' to your 'PATH'""
+            description: Print PATH message
