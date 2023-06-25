@@ -4,9 +4,11 @@ A simple Zarf package to install `k3d`, load its required images, and start a cl
 
 ## Using
 
-To use this package you can import the 4 components in the root `zarf.yaml` into your [Custom `init` Package](https://docs.zarf.dev/docs/zarf-tutorials/custom-init-packages).
+To use this package, import the 4 components in the root `zarf.yaml` into your [Custom `init` Package](https://docs.zarf.dev/docs/zarf-tutorials/custom-init-packages).
 
-> ⚠️ **NOTE:** You can slim down your init package size by only including the `k3d` binaries you expect to use on your target OS
+Then add `k3s_version = '<desired-version>'` to your `zarf-config.toml` under `[package.create.set]`.  You can see the version this repo uses in the `Makefile`. 
+
+> ⚠️ **NOTE:** You can optionally slim down your `init` package size by only including the `k3d` binaries you expect to use for your target OS.
 
 ```yaml
 kind: ZarfInitConfig
@@ -78,4 +80,10 @@ make build
 
 ```
 make build-image
+```
+
+### Release the Docker image
+
+```
+make release-image
 ```
