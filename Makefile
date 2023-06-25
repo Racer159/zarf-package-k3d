@@ -1,8 +1,14 @@
+ARCH ?= amd64
+VERSION ?= v1.27.2-k3s1
+
 build:
-	zarf package create . --confirm
+	zarf package create . --confirm --set K3S_VERSION=$(VERSION) -a $(ARCH)
 
 build-image:
-	docker build . --tag racer159/k3s-airgap:v1.27.2-k3s1
+	docker buildx build --platform linux/$(ARCH) --build-arg K3S_VERSION=$(VERSION) --tag racer159/k3s-airgap:$(VERSION) . --progress plain
+
+release-image:
+	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --build-arg K3S_VERSION=$(VERSION) --tag racer159/k3s-airgap:$(VERSION) .
 
 .PHONY: help
 help: ## Display this help information

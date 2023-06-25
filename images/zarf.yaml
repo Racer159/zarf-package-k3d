@@ -15,7 +15,7 @@ components:
     files:
       # Transfer the K3d images for docker to use in the air gap
       - source: k3s-amd64.tar
-        shasum: 81728d02fe9b5f441c06d17ea6f93e97282f9d152ca53fc268ea371fe95dd2f8
+        shasum: 60456e233de2458dd6844bec0f210a5071c0d9b4a5a3b3a9d9d29f2302f62054
         target: k3s-amd64.tar
       - source: k3d-proxy-amd64.tar
         shasum: dc02fb1830344469d62ce54d8b0fe757c1dfca53dc8db55d449f4c1c7af1707a
@@ -26,7 +26,7 @@ components:
     actions:
       onCreate:
         before:
-          - cmd: ./zarf tools registry pull racer159/k3s-airgap:v1.27.2-k3s1 k3s-amd64.tar
+          - cmd: ./zarf tools registry pull racer159/k3s-airgap:###ZARF_PKG_TMPL_K3S_VERSION### k3s-amd64.tar
             description: Pull the air gap 'k3s' image
           - cmd: ./zarf tools registry pull ghcr.io/k3d-io/k3d-proxy:5.5.1 k3d-proxy-amd64.tar
             description: Pull the 'k3d-proxy' image
