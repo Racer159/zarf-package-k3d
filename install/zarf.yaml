@@ -11,7 +11,7 @@ variables:
 components:
   - name: k3d
     description: >
-      *** REQUIRES DOCKER ***
+      *** REQUIRES DOCKER & SUDO (or ROOT) ***
       Installs K3d, a lightweight wrapper to run k3s (Rancher Lab's minimal Kubernetes
       distribution) in Docker.
     actions:
