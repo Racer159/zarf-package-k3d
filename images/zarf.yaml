@@ -46,6 +46,14 @@ components:
             description: Load the 'k3d-tools' image into Docker
           - cmd: rm k3s-amd64.tar k3d-proxy-amd64.tar k3d-tools-amd64.tar
             description: Cleanup the loaded images
+      onRemove:
+        before:
+          - cmd: docker image rm racer159/k3s-airgap:###ZARF_PKG_TMPL_K3S_VERSION###
+            description: Remove the air gap 'k3s' image from Docker
+          - cmd: docker image rm ghcr.io/k3d-io/k3d-proxy:5.5.1
+            description: Remove the 'k3d-proxy' image from Docker
+          - cmd: docker image rm ghcr.io/k3d-io/k3d-tools:5.5.1
+            description: Remove the 'k3d-tools' image from Docker
 
   # ARM-64 version of the K3d images
   - name: k3d-images
@@ -89,3 +97,11 @@ components:
             description: Load the 'k3d-tools' image into Docker
           - cmd: rm k3s-arm64.tar k3d-proxy-arm64.tar k3d-tools-arm64.tar
             description: Cleanup the loaded images
+      onRemove:
+        before:
+          - cmd: docker image rm racer159/k3s-airgap:###ZARF_PKG_TMPL_K3S_VERSION###
+            description: Remove the air gap 'k3s' image from Docker
+          - cmd: docker image rm ghcr.io/k3d-io/k3d-proxy:5.5.1
+            description: Remove the 'k3d-proxy' image from Docker
+          - cmd: docker image rm ghcr.io/k3d-io/k3d-tools:5.5.1
+            description: Remove the 'k3d-tools' image from Docker
