@@ -5,7 +5,7 @@ metadata:
 
 components:
   # AMD-64 version of the K3d images
-  - name: k3d
+  - name: k3d-images
     description: >
       *** REQUIRES DOCKER ***
       Loads the required images for K3d into Docker to be used offline.
@@ -15,7 +15,7 @@ components:
     files:
       # Transfer the K3d images for docker to use in the air gap
       - source: k3s-amd64.tar
-        shasum: 81728d02fe9b5f441c06d17ea6f93e97282f9d152ca53fc268ea371fe95dd2f8
+        shasum: 60456e233de2458dd6844bec0f210a5071c0d9b4a5a3b3a9d9d29f2302f62054
         target: k3s-amd64.tar
       - source: k3d-proxy-amd64.tar
         shasum: dc02fb1830344469d62ce54d8b0fe757c1dfca53dc8db55d449f4c1c7af1707a
@@ -26,11 +26,11 @@ components:
     actions:
       onCreate:
         before:
-          - cmd: ./zarf tools registry pull racer159/k3s-airgap:v1.27.2-k3s1 k3s-amd64.tar
+          - cmd: ./zarf tools registry pull --platform linux/amd64 racer159/k3s-airgap:###ZARF_PKG_TMPL_K3S_VERSION### k3s-amd64.tar
             description: Pull the air gap 'k3s' image
-          - cmd: ./zarf tools registry pull ghcr.io/k3d-io/k3d-proxy:5.5.1 k3d-proxy-amd64.tar
+          - cmd: ./zarf tools registry pull --platform linux/amd64 ghcr.io/k3d-io/k3d-proxy:5.5.1 k3d-proxy-amd64.tar
             description: Pull the 'k3d-proxy' image
-          - cmd: ./zarf tools registry pull ghcr.io/k3d-io/k3d-tools:5.5.1 k3d-tools-amd64.tar
+          - cmd: ./zarf tools registry pull --platform linux/amd64 ghcr.io/k3d-io/k3d-tools:5.5.1 k3d-tools-amd64.tar
             description: Pull the 'k3d-tools' image
       onDeploy:
         before:
@@ -47,4 +47,45 @@ components:
           - cmd: rm k3s-amd64.tar k3d-proxy-amd64.tar k3d-tools-amd64.tar
             description: Cleanup the loaded images
 
-# TODO: (@WSTARR) ARM-64 version of the K3s stack - `zarf tools registry pull` does not support --architecture today
+  # ARM-64 version of the K3d images
+  - name: k3d-images
+    description: >
+      *** REQUIRES DOCKER ***
+      Loads the required images for K3d into Docker to be used offline.
+    only:
+      cluster:
+        architecture: arm64
+    files:
+      # Transfer the K3d images for docker to use in the air gap
+      - source: k3s-arm64.tar
+        shasum: 8475fb645ad3214cf33589fdbd59da52816944f0b00d0fd68ac4272d0b2499b3
+        target: k3s-arm64.tar
+      - source: k3d-proxy-arm64.tar
+        shasum: 600c48edb4b83259cb96c1334f6d5c70bc530ae921c7b134cff6d75d052010fd
+        target: k3d-proxy-arm64.tar
+      - source: k3d-tools-arm64.tar
+        shasum: 13fe853f4dd8b72627b12ff8c3630a1cc2c65615254d4bc0b459c88abb4ac783
+        target: k3d-tools-arm64.tar
+    actions:
+      onCreate:
+        before:
+          - cmd: ./zarf tools registry pull --platform linux/arm64 racer159/k3s-airgap:###ZARF_PKG_TMPL_K3S_VERSION### k3s-arm64.tar
+            description: Pull the air gap 'k3s' image
+          - cmd: ./zarf tools registry pull --platform linux/arm64 ghcr.io/k3d-io/k3d-proxy:5.5.1 k3d-proxy-arm64.tar
+            description: Pull the 'k3d-proxy' image
+          - cmd: ./zarf tools registry pull --platform linux/arm64 ghcr.io/k3d-io/k3d-tools:5.5.1 k3d-tools-arm64.tar
+            description: Pull the 'k3d-tools' image
+      onDeploy:
+        before:
+          - cmd: if [ "$(uname -m)" != "arm64" ]; then echo "this package architecture is arm64, but the target system has a different architecture. These architectures must be the same" && exit 1; fi
+            description: Check that the host architecture matches the package architecture
+            maxRetries: 0
+        after:
+          - cmd: docker image load -i k3s-arm64.tar
+            description: Load the air gap 'k3s' image into Docker
+          - cmd: docker image load -i k3d-proxy-arm64.tar
+            description: Load the 'k3d-proxy' image into Docker
+          - cmd: docker image load -i k3d-tools-arm64.tar
+            description: Load the 'k3d-tools' image into Docker
+          - cmd: rm k3s-arm64.tar k3d-proxy-arm64.tar k3d-tools-arm64.tar
+            description: Cleanup the loaded images

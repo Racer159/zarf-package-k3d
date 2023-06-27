@@ -4,64 +4,30 @@ metadata:
   description: Used to establish a new Zarf cluster
 
 components:
-  # AMD-64 version of the K3d images
+  # Required K3d images
   - name: k3d-images
     required: true
     import:
       path: images
-      name: k3d
-    only:
-      cluster:
-        architecture: amd64
+      name: k3d-images
 
+  # Linux version of K3d binary
   - name: k3d-linux
     required: true
     import:
-      path: install
-      name: k3d
-    only:
-      localOS: linux
-      cluster:
-        architecture: amd64
-    files:
-      # Include the actual K3d binary
-      - source: https://github.com/k3d-io/k3d/releases/download/v5.5.1/k3d-linux-amd64
-        shasum: 4849027dc5e835bcce49070af3f4eeeaada81d96bce49a8b89904832a0c3c2c0
-        target: /usr/local/bin/k3d
-        executable: true
+      path: install/linux
+      name: k3d-linux
 
-  # AMD-64 Darwin version of K3d
+  # Darwin version of K3d binary
   - name: k3d-darwin
     required: true
     import:
-      path: install
-      name: k3d
-    only:
-      localOS: darwin
-      cluster:
-        architecture: amd64
-    files:
-      # Include the actual K3d binary
-      - source: https://github.com/k3d-io/k3d/releases/download/v5.5.1/k3d-darwin-amd64
-        shasum: 5d3b6776eb349eab3829229ce8c87f9c279093b0272cc522981e101b40c4d6c4
-        target: /usr/local/bin/k3d
-        executable: true
+      path: install/darwin
+      name: k3d-darwin
 
-  # AMD-64 Windows version of K3d
+  # Windows version of K3d binary
   - name: k3d-windows
     required: true
     import:
-      path: install
-      name: k3d
-    only:
-      localOS: windows
-      cluster:
-        architecture: amd64
-    files:
-      # Include the actual K3d binary
-      - source: https://github.com/k3d-io/k3d/releases/download/v5.5.1/k3d-windows-amd64.exe
-        shasum: ba8cf49fa6d3a19771e5837a2913a86cceaa70d79189d2f87d6f9967ca3e8f1b
-        target: ~/bin/k3d
-        executable: true
-
-  # TODO: (@WSTARR) ARM-64 version of the K3s stack - `zarf tools registry pull` does not support --architecture today
+      path: install/windows
+      name: k3d-windows

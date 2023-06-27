@@ -1,0 +1,39 @@
+kind: ZarfInitConfig
+metadata:
+  name: distro-k3d
+  description: Used to establish a new Zarf cluster
+
+components:
+  # AMD-64 Linux version of K3d
+  - name: k3d-linux
+    required: true
+    import:
+      path: ../common
+      name: k3d-install
+    only:
+      localOS: linux
+      cluster:
+        architecture: amd64
+    files:
+      # Include the actual K3d binary
+      - source: https://github.com/k3d-io/k3d/releases/download/v5.5.1/k3d-linux-amd64
+        shasum: 4849027dc5e835bcce49070af3f4eeeaada81d96bce49a8b89904832a0c3c2c0
+        target: ~/.zarf/bin/k3d
+        executable: true
+
+  # ARM-64 Linux version of K3d
+  - name: k3d-linux
+    required: true
+    import:
+      path: ../common
+      name: k3d-install
+    only:
+      localOS: linux
+      cluster:
+        architecture: arm64
+    files:
+      # Include the actual K3d binary
+      - source: https://github.com/k3d-io/k3d/releases/download/v5.5.1/k3d-linux-arm64
+        shasum: 4a3740fb2bc61fda32b2437c270a5f7dc321ade5e9cb6d932b4b97397538042d
+        target: ~/.zarf/bin/k3d
+        executable: true

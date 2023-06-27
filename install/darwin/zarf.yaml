@@ -1,0 +1,39 @@
+kind: ZarfInitConfig
+metadata:
+  name: distro-k3d
+  description: Used to establish a new Zarf cluster
+
+components:
+  # AMD-64 Darwin version of K3d
+  - name: k3d-darwin
+    required: true
+    import:
+      path: ../common
+      name: k3d-install
+    only:
+      localOS: darwin
+      cluster:
+        architecture: amd64
+    files:
+      # Include the actual K3d binary
+      - source: https://github.com/k3d-io/k3d/releases/download/v5.5.1/k3d-darwin-amd64
+        shasum: 5d3b6776eb349eab3829229ce8c87f9c279093b0272cc522981e101b40c4d6c4
+        target: ~/.zarf/bin/k3d
+        executable: true
+
+  # ARM-64 Darwin version of K3d
+  - name: k3d-darwin
+    required: true
+    import:
+      path: ../common
+      name: k3d-install
+    only:
+      localOS: darwin
+      cluster:
+        architecture: arm64
+    files:
+      # Include the actual K3d binary
+      - source: https://github.com/k3d-io/k3d/releases/download/v5.5.1/k3d-darwin-arm64
+        shasum: 891161cd18f5505c8d3eff08344c00ca76f807dfb3d019d119fc1013fe3616ef
+        target: ~/.zarf/bin/k3d
+        executable: true
