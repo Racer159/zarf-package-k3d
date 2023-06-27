@@ -23,5 +23,11 @@ components:
           - cmd: ~/.zarf/bin/k3d cluster create --image racer159/k3s-airgap:###ZARF_PKG_TMPL_K3S_VERSION### ${ZARF_VAR_K3D_ARGS}
             description: Create a 'k3d' cluster
         onSuccess:
-          - cmd: echo "Successfully created a 'k3d' cluster - to interact with 'k3d' manually add '~/.zarf/bin' to your 'PATH'""
+          - cmd: echo "Successfully created a 'k3d' cluster - to interact with 'k3d' manually add '~/.zarf/bin' to your 'PATH'"
             description: Print PATH message
+      onRemove:
+        before:
+          - cmd: ~/.zarf/bin/k3d cluster delete
+            description: Delete the 'k3d' cluster
+          - cmd: rm ~/.zarf/bin/k3d
+            description: Delete the 'k3d' binary
