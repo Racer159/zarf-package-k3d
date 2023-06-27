@@ -1,0 +1,34 @@
+kind: ZarfInitConfig
+metadata:
+  name: distro-k3d
+  description: Used to establish a new Zarf cluster
+
+components:
+  # AMD-64 Windows version of K3d
+  - name: k3d-windows
+    required: true
+    import:
+      path: ../common
+      name: k3d-install
+    only:
+      localOS: windows
+      cluster:
+        architecture: amd64
+    files:
+      # Include the actual K3d binary
+      - source: https://github.com/k3d-io/k3d/releases/download/v5.5.1/k3d-windows-amd64.exe
+        shasum: ba8cf49fa6d3a19771e5837a2913a86cceaa70d79189d2f87d6f9967ca3e8f1b
+        target: ~/.zarf/bin/k3d
+        executable: true
+
+  # The ARM is a lie - tell the people about it!
+  - name: k3d-windows
+    required: true
+    only:
+      localOS: windows
+      cluster:
+        architecture: arm64
+    actions:
+      onDeploy:
+        before:
+          - cmd: echo "K3d is not supported on Windows ARM64 at this time." && exit 1

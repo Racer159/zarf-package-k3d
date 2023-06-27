@@ -9,7 +9,7 @@ variables:
     default: --k3s-arg --disable=traefik@server:0
 
 components:
-  - name: k3d
+  - name: k3d-install
     description: >
       *** REQUIRES DOCKER ***
       Installs K3d, a lightweight wrapper to run k3s (Rancher Lab's minimal Kubernetes distribution) in Docker.
